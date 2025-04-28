@@ -19,7 +19,7 @@ const Cart = () => {
     cartTotal,
   } = useCart();
 
-  const handleQuantityChange = (id: string, newQuantity: number) => {
+  const handleQuantityChange = (id, newQuantity) => {
     if (newQuantity < 1) {
       removeFromCart(id);
       toast.success("Item removed from cart");

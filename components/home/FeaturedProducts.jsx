@@ -5,19 +5,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  featured?: boolean;
-  categoryId: string;
-  createdAt?: string;
-}
+
 
 const FeaturedProducts = () => {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -12,17 +12,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-interface DashboardOverviewProps {
-  orders?: Order[];
-  products?: Product[];
-  categories?: Category[];
-}
+
 
 const DashboardOverview = ({
   orders = [],
   products = [],
   categories = [],
-}: DashboardOverviewProps) => {
+}) => {
   const { theme } = useTheme();
 
   // Calculate stats

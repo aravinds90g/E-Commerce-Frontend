@@ -9,22 +9,11 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useTheme } from "@/context/ThemeContext";
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  rating: number;
-  image: string;
-  stock: number;
-  categoryId?: string;
-}
 
-interface ProductCardProps {
-  product?: Product;
-}
 
-const ProductCard = ({ product }: ProductCardProps) => {
+
+
+const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const { isSignedIn } = useUser();
@@ -40,7 +29,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     );
   }
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
 

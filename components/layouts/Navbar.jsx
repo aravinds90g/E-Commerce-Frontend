@@ -53,7 +53,7 @@ const Navbar = () => {
     }
   }, [isSignedIn, user, router]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e) => {
     e.preventDefault();
     const trimmed = searchInput.trim();
     if (trimmed) {
@@ -356,7 +356,7 @@ const Navbar = () => {
 };
 
 // Add these simple icon components
-const MoonIcon = ({ className }: { className?: string }) => (
+const MoonIcon = ({ className }) => (
   <svg
     className={className}
     fill="none"
@@ -372,7 +372,7 @@ const MoonIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const SunIcon = ({ className }: { className?: string }) => (
+const SunIcon = ({ className }) => (
   <svg
     className={className}
     fill="none"

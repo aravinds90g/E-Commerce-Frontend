@@ -1,37 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 
-interface ShippingAddress {
-  firstName: string;
-  lastName: string;
-  address1: string;
-  address2?: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
+// Create a wrapper component to handle Suspense
+export default function SuccessPageWrapper() {
+  return (
+    <Suspense fallback={<SuccessPageLoading />}>
+      <SuccessPage />
+    </Suspense>
+  );
 }
 
-export default function SuccessPage() {
+// Loading component for the Suspense fallback
+function SuccessPageLoading() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-green-50 px-6 text-center">
+      <div className="animate-pulse mb-6">
+        <div className="h-24 w-24 bg-green-200 rounded-full"></div>
+      </div>
+      <div className="h-8 bg-green-200 rounded w-3/4 mb-4"></div>
+      <div className="h-4 bg-green-200 rounded w-1/2 mb-6"></div>
+    </div>
+  );
+}
+
+// Main SuccessPage component
+function SuccessPage() {
   const { cart, cartTotal, clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const { user } = useUser();
   const [isProcessing, setIsProcessing] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState();
   const [orderProcessed, setOrderProcessed] = useState(false);
-  const [shippingAddress, setShippingAddress] =
-    useState<ShippingAddress | null>(null);
+  const [shippingAddress, setShippingAddress] = useState(null);
 
   useEffect(() => {
-    // Load shipping address from localStorage
     if (typeof window !== "undefined") {
       const savedAddress = localStorage.getItem("shippingAddress");
       if (savedAddress) {
@@ -41,26 +51,22 @@ export default function SuccessPage() {
   }, []);
 
   useEffect(() => {
-    // Check if we have all required data before processing
     const requiredDataLoaded =
       sessionId && cart.length > 0 && user && shippingAddress;
 
     if (!requiredDataLoaded) {
-      // If we're missing critical data, either wait or redirect
       if (!sessionId) {
         router.push("/");
       }
       return;
     }
 
-    // Prevent duplicate processing
     if (orderProcessed) return;
 
     const processOrder = async () => {
       try {
         setIsProcessing(true);
 
-        // Create the order with all required data including shipping address
         await axios.post(
           "https://e-commerce-backend-1-2dj3.onrender.com/api/order",
           {
@@ -69,19 +75,15 @@ export default function SuccessPage() {
             userId: user.id,
             userName: user.firstName || "Guest",
             sessionId,
-            shippingAddress, // Include the shipping address
-            status: "completed", // Mark as completed since payment succeeded
+            shippingAddress,
+            status: "completed",
           }
         );
 
-        // Mark as processed and clear cart
         setOrderProcessed(true);
         clearCart();
-
-        // Clean up the shipping address from localStorage
         localStorage.removeItem("shippingAddress");
 
-        // Redirect after 5 seconds
         setTimeout(() => {
           router.push("/");
         }, 3000);
@@ -95,9 +97,8 @@ export default function SuccessPage() {
 
     processOrder();
 
-    // Cleanup function to prevent memory leaks
     return () => {
-      // Clear any pending redirect if component unmounts
+      // Cleanup if needed
     };
   }, [
     cart,

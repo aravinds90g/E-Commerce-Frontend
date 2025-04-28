@@ -16,45 +16,11 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-interface OrderItem {
-  id: string;
-  product: string;
-  description: string;
-  quantity: number;
-  price: number;
-  image?: string;
-}
-
-interface ShippingAddress {
-  name: string;
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-}
-
-interface Order {
-  id: string;
-  userName: string;
-  email: string;
-  total: number;
-  subtotal: number;
-  shipping: number;
-  tax: number;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  estimatedDelivery?: string;
-  paymentMethod: string;
-  shippingAddress: ShippingAddress;
-  orderItems: OrderItem[];
-}
 
 const OrderPage = () => {
   const { theme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
   const { user } = useUser();
@@ -114,7 +80,7 @@ const OrderPage = () => {
     }
   };
 
-  const getStatusDetails = (status: string) => {
+  const getStatusDetails = (status) => {
     const baseStyles =
       "flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium";
 

@@ -21,7 +21,7 @@ const OrdersPage: React.FC<OrdersPageProps> = ({ userId }) => {
         );
         setOrders(response.data);
       } catch (e) {
-        setError("Failed to load orders.");
+        setError(e+"Failed to load orders.");
       } finally {
         setLoading(false);
       }

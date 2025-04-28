@@ -207,9 +207,9 @@ const AdminPage = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0 w-10 h-10 bg-muted rounded-md flex items-center justify-center">
-                      {product.images?.[0] ? (
+                      {product.image ? (
                         <img
-                          src={product.images[0]}
+                          src={product.image}
                           alt={product.name}
                           className="w-full h-full object-cover rounded-md"
                         />

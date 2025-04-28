@@ -10,25 +10,12 @@ import { useTheme } from "@/context/ThemeContext";
 import { ShoppingCart, Loader2, ArrowLeft, CreditCard } from "lucide-react";
 import Link from "next/link";
 
-import { Product } from "@/types";
-
-interface ShippingAddress {
-  firstName: string;
-  lastName: string;
-  address1: string;
-  address2?: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-}
-
 export default function CheckoutPage() {
   const { theme } = useTheme();
   const cartContext = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
   const { isSignedIn, user } = useUser();
-  const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
+  const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
     lastName: "",
     address1: "",
@@ -56,9 +43,7 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
-  const handleAddressChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleAddressChange = (e) => {
     const { name, value } = e.target;
     setShippingAddress((prev) => ({
       ...prev,
@@ -141,15 +126,6 @@ export default function CheckoutPage() {
       // Save address to localStorage
       saveAddressToLocalStorage();
 
-      // Create order in your database first
-      // await axios.post("https://e-commerce-backend-1-2dj3.onrender.com/api/order", {
-      //   userId: user?.id,
-      //   items: cart,
-      //   total: cartTotal,
-      //   status: "pending",
-      //   shippingAddress: shippingAddress,
-      // });
-
       // Then create Stripe session
       const checkoutRes = await axios.post(
         "https://e-commerce-backend-1-2dj3.onrender.com/api/checkout",
@@ -165,7 +141,7 @@ export default function CheckoutPage() {
 
       const { sessionId } = checkoutRes.data;
       const stripe = await loadStripe(
-        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
       );
 
       if (!stripe) throw new Error("Stripe initialization failed");
@@ -245,7 +221,7 @@ export default function CheckoutPage() {
                 </div>
               ) : (
                 <ul className="divide-y">
-                  {cart.map((item: Product) => (
+                  {cart.map((item) => (
                     <li
                       key={item.id}
                       className={`py-4 ${
@@ -512,7 +488,6 @@ export default function CheckoutPage() {
                         <option value="United Kingdom">United Kingdom</option>
                         <option value="Australia">Australia</option>
                         <option value="Germany">Germany</option>
-                        {/* Add more countries as needed */}
                       </select>
                     </div>
                   </div>
@@ -543,14 +518,14 @@ export default function CheckoutPage() {
           {/* Order Total & Checkout */}
           <div>
             <div
-              className={`sticky top-7 justify-center items-center p-6  rounded-xl ${
+              className={`sticky top-7 justify-center items-center p-6 rounded-xl ${
                 theme === "dark"
                   ? "bg-gray-800 border-gray-700"
                   : "bg-white border-gray-200"
               } border shadow-sm`}
             >
               <h2
-                className={`text-xl font-semibold mb-4  ${
+                className={`text-xl font-semibold mb-4 ${
                   theme === "dark" ? "text-gray-200" : "text-gray-800"
                 }`}
               >
@@ -637,7 +612,7 @@ export default function CheckoutPage() {
                     theme === "dark" ? "text-gray-400" : "text-gray-500"
                   }`}
                 >
-                  {`You'll`} be redirected to Stripe to complete your payment
+                  You'll be redirected to Stripe to complete your payment
                 </p>
               )}
             </div>

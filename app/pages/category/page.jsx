@@ -30,16 +30,10 @@ const cardGradients = {
   ],
 };
 
-type Category = {
-  id: string;
-  name: string;
-  description?: string;
-  image?: string;
-  products: { id: string }[];
-};
+
 
 const CategoriesPage = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
 

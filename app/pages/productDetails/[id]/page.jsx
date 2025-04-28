@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ShoppingCart,
   Star,
@@ -10,7 +10,7 @@ import {
   Truck,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -19,34 +19,17 @@ import Footer from "@/components/layouts/Footer";
 import { useTheme } from "@/context/ThemeContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  images?: string[];
-  stock: number;
-  rating?: number;
-  categoryId: string;
-  createdAt: string;
-  updatedAt: string;
-  category: {
-    id: string;
-    name: string;
-    description: string;
-  };
-}
 
-const ProductDetailPage = ({ params }: { params: { id: string } }) => {
+const ProductDetailPage = () => {
+  const { id } = useParams()
   const { theme } = useTheme();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const { addToCart } = useCart();
   const router = useRouter();
-  const { id } = use(params);
+ 
   const { isSignedIn } = useUser();
 
   useEffect(() => {
@@ -125,7 +108,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
           />
 
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            {/* Image Skeleton */}
             <div className="w-full lg:w-1/2 space-y-4">
               <Skeleton
                 className={`aspect-square rounded-lg ${
@@ -144,7 +126,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
               </div>
             </div>
 
-            {/* Info Skeleton */}
             <div className="w-full lg:w-1/2 space-y-6">
               <Skeleton
                 className={`h-10 w-3/4 ${
@@ -230,7 +211,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
         </button>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-          {/* Product Images */}
           <div className="w-full lg:w-1/2">
             <div className="relative aspect-square rounded-xl overflow-hidden border">
               <img
@@ -285,7 +265,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             )}
           </div>
 
-          {/* Product Info */}
           <div className="w-full lg:w-1/2">
             <div className="mb-4">
               <span
@@ -373,7 +352,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
               </p>
             </div>
 
-            {/* Stock Status */}
             <div
               className={`mb-6 p-4 rounded-lg border ${
                 theme === "dark"
@@ -414,7 +392,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
               )}
             </div>
 
-            {/* Quantity and Add to Cart */}
             <div className="mb-8">
               <div className="flex flex-col sm:flex-row gap-4">
                 <div
@@ -487,7 +464,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
               </div>
             </div>
 
-            {/* Product Meta */}
             <div
               className={`border-t pt-6 ${
                 theme === "dark" ? "border-gray-800" : "border-gray-200"

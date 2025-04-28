@@ -1,10 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import {
   Filter,
   X,
-  ArrowDownNarrowWide,
-  ArrowUpNarrowWide,
+
   Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,34 +15,54 @@ import Footer from "@/components/layouts/Footer";
 import { useTheme } from "@/context/ThemeContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface Category {
-  id: string;
-  name: string;
-  description?: string;
-  image?: string;
+
+
+
+
+
+
+
+
+
+
+export default function ProductsPageWrapper() {
+  return (
+    <Suspense fallback={<ProductsLoadingSkeleton />}>
+      <ProductsPage />
+    </Suspense>
+  );
 }
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  categoryId: string;
-  stock?: number;
-  rating?: number;
-  createdAt?: string;
+
+function ProductsLoadingSkeleton() {
+  const { theme } = useTheme();
+  return (
+    <div className={`container mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-screen transition-colors duration-300 ${
+      theme === "dark" ? "bg-gray-900" : "bg-white"
+    }`}>
+      {/* Your existing skeleton loading UI */}
+      <div className="space-y-8">
+        <Skeleton className={`h-10 w-1/3 ${
+          theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+        }`} />
+        {/* ... rest of your skeleton code ... */}
+      </div>
+    </div>
+  );
 }
+
+
+
 
 const ProductsPage = () => {
   const { theme } = useTheme();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [sortOption, setSortOption] = useState<string>("featured");
+  const [sortOption, setSortOption] = useState("featured");
 
   const searchParams = useSearchParams();
   const searchInput = searchParams.get("search") || "";
@@ -97,19 +116,25 @@ const ProductsPage = () => {
         product.price >= priceRange[0] && product.price <= priceRange[1]
     )
     .sort((a, b) => {
+      if (!a || !b) return 0; // safety check
+
       switch (sortOption) {
         case "price-asc":
           return a.price - b.price;
+
         case "price-desc":
           return b.price - a.price;
+
         case "newest":
-          return (
-            new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
-          );
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateB - dateA;
+
         default:
           return 0;
       }
     });
+
 
   const resetFilters = () => {
     setSelectedCategory(null);
@@ -585,4 +610,4 @@ const ProductsPage = () => {
   );
 };
 
-export default ProductsPage;
+// export default ProductsPage;
